@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demi UGC Shot-Sheets</title>
+<style>
+:root{--bg:#f6f3ed;--card:#fff;--line:#e6dfd2;--ink:#23201b;--mut:#857a6a;--ink2:#4a4439;--accent:#b5462f;--accent2:#1f6f5c;--amber:#a9772a;--chip:#f0ebe1;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.bar{position:sticky;top:0;z-index:30;background:rgba(246,243,237,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 22px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar .grow{flex:1}
+.bar a{color:var(--accent2);text-decoration:none;font-weight:600}
+.bar a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:30px 22px 90px}
+h1{font-size:27px;margin:0 0 6px;letter-spacing:-.3px}
+.sub{color:var(--mut);margin:0 0 26px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:0 6px 22px rgba(0,0,0,.07);transform:translateY(-2px)}
+.card .top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.brand{font-size:18px;font-weight:700;letter-spacing:-.2px}
+.chip{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--ink2)}
+.chip.draft{background:#fbeede;color:#a9772a}
+.chip.review{background:#e7eef7;color:#3a6ea5}
+.chip.final{background:#e3f1ec;color:#1f6f5c}
+.card h2{font-size:16px;margin:0 0 8px;color:var(--ink);font-weight:600}
+.card .met{color:var(--mut);font-size:13px;margin:0}
+.card .insp{color:var(--accent2);font-size:12.5px;margin-top:12px;display:inline-block}
+.empty{color:var(--mut);background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:26px;text-align:center}
+footer{color:#a99e8d;font-size:12px;margin-top:34px}
+.count{color:var(--mut);font-size:13px;margin-left:4px}
+</style></head>
+<body>
+<div class="bar">
+  <strong>Demi UGC</strong>
+  <span class="grow"></span>
+  <a href="https://demi.ai" target="_blank">demi.ai &rarr;</a>
+</div>
+<div class="wrap">
+  <h1>UGC Shot-Sheets</h1>
+  <p class="sub">Each card is one UGC inspiration video turned into an original, editable Demi shot-sheet. Open a card to read or edit its second-by-second script; edits save back to this repo with the token you paste once (it works across every shot-sheet).</p>
+  <div id="grid" class="grid"><p class="met" style="color:var(--mut)">Loading shot-sheets...</p></div>
+  <footer>Generated for Demi UGC production. The on-screen creator on each sheet is a relatable stand-in persona; Demi is the featured product. No media is generated until separately approved.</footer>
+</div>
+<script>
+function esc(s){ return (s==null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function chipClass(st){ const s=(st||"").toLowerCase(); if(s.indexOf("final")>=0) return "final"; if(s.indexOf("review")>=0) return "review"; return "draft"; }
+
+fetch("reels.json?cb="+Date.now()).then(r=>r.json()).then(d=>{
+  const reels = (d.reels||[]);
+  const g = document.getElementById("grid");
+  if(!reels.length){ g.innerHTML = "<div class='empty'>No shot-sheets yet. The first one will appear here once it is added.</div>"; return; }
+  g.innerHTML = reels.map(r=>`
+    <a class="card" href="shot.html?r=${encodeURIComponent(r.id)}">
+      <div class="top">
+        <span class="brand">${esc(r.persona||r.brand||r.id)}</span>
+        <span class="chip ${chipClass(r.status)}">${esc(r.status||"Draft")}</span>
+      </div>
+      <h2>${esc(r.title||"")}</h2>
+      <p class="met">${esc(r.category||"")}${r.category&&r.length?" &middot; ":""}${esc(r.length||"")}${r.date?" &middot; "+esc(r.date):""}</p>
+      ${r.inspiration_url?`<span class="insp">View inspiration video &rarr;</span>`:""}
+    </a>`).join("");
+}).catch(e=>{
+  document.getElementById("grid").innerHTML = "<div class='empty' style='color:#b5462f'>Could not load reels.json: "+esc(e.message)+"</div>";
+});
+</script>
+</body></html>

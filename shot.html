@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demi UGC Shot-Sheet</title>
+<style>
+:root{--bg:#f6f3ed;--card:#fff;--line:#e6dfd2;--ink:#23201b;--mut:#857a6a;--ink2:#4a4439;--accent:#b5462f;--accent2:#1f6f5c;--amber:#a9772a;--chip:#f0ebe1;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.bar{position:sticky;top:0;z-index:30;background:rgba(246,243,237,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar .grow{flex:1}
+.bar .hint{color:var(--mut);font-size:13px}
+.bar a.home{color:var(--accent2);text-decoration:none;font-weight:600}
+.bar a.home:hover{text-decoration:underline}
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 14px}
+button.primary{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+button.primary:hover{background:#000}
+#status{font-size:13px;color:var(--mut)}
+#status.ok{color:var(--accent2);font-weight:600}
+#status.err{color:var(--accent);font-weight:600}
+.tokrow{display:none;width:100%;gap:8px;align-items:center;flex-wrap:wrap;padding-top:8px}
+.tokrow input{flex:1;min-width:240px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font:inherit}
+.tokrow .tip{font-size:12.5px;color:var(--mut);width:100%}
+.tokrow a{color:var(--amber)}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 22px 90px}
+h1[contenteditable]{font-size:26px;margin:0 0 8px;letter-spacing:-.2px;outline:none}
+.meta{color:var(--mut);margin:0 0 18px;outline:none}
+.concept{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin:0 0 26px;outline:none}
+.audiobox{border-left-color:var(--accent2)}
+h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--accent2);margin:32px 0 12px;border-bottom:1px solid var(--line);padding-bottom:7px}
+.storyboard{width:100%;border:1px solid var(--line);border-radius:10px;display:block}
+.sbnote{color:var(--mut);font-size:13px;margin:10px 2px 0}
+.beat{display:flex;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.beat .thumb{flex:0 0 132px}
+.beat .thumb img{width:132px;border-radius:8px;border:1px solid var(--line);display:block}
+.beat .thumb .tc{font-weight:700;color:var(--accent);font-size:14px;margin-top:8px;outline:none}
+.beat .body{flex:1;min-width:0}
+.line{display:flex;gap:12px;padding:3px 0}
+.line .k{flex:0 0 96px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding-top:3px;user-select:none}
+.line .v{flex:1;outline:none;border-radius:5px;padding:1px 4px;margin:-1px -4px}
+.line .v:focus{background:#fff7e9;box-shadow:0 0 0 2px #f0d9a8}
+.v.vo{font-weight:600}
+.v.ost{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:13.5px;background:var(--chip);padding:2px 8px;border-radius:6px;align-self:flex-start}
+.v.mirror{color:var(--mut);font-size:13px;font-style:italic}
+.notes{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--ink2);outline:none}
+footer{color:#a99e8d;font-size:12px;margin-top:24px}
+.edited{color:var(--accent)}
+</style></head>
+<body>
+<div class="bar">
+  <a class="home" href="index.html">&larr; All shot-sheets</a>
+  <span class="hint">Click any text to edit. Then Save to publish.</span>
+  <span class="grow"></span>
+  <span id="status">Loading...</span>
+  <button id="exportBtn" title="Download the current content as data.json">Export</button>
+  <button id="saveBtn" class="primary">Save</button>
+  <div class="tokrow" id="tokrow">
+    <input id="tokInput" type="password" placeholder="Paste GitHub fine-grained token (Contents: Read and write on this repo)">
+    <button id="tokSave" class="primary">Use token &amp; Save</button>
+    <button id="tokCancel">Cancel</button>
+    <div class="tip">The token stays only in this browser (localStorage), never in the page, and works for every shot-sheet. Create one at <a href="https://github.com/settings/tokens?type=beta" target="_blank">github.com/settings/tokens</a> with Repository access limited to this repo and Repository permissions &rarr; Contents: Read and write.</div>
+  </div>
+</div>
+<div class="wrap" id="app"><p style="color:var(--mut)">Loading shot-sheet...</p></div>
+<script>
+const REPO = "thepmfguy/demi-ugc-shotsheet";
+const BRANCH = "main";
+const REEL = (new URLSearchParams(location.search).get("r") || "").replace(/[^a-z0-9_-]/gi,"");
+const BASE = "reels/" + REEL + "/";          // where this item's assets live
+const FILE = BASE + "data.json";             // path committed on Save
+let MODEL = null;
+let DIRTY = false;
+
+const $ = s => document.querySelector(s);
+const statusEl = () => $("#status");
+function setStatus(t, cls){ const s=statusEl(); s.textContent=t; s.className=cls||""; }
+function getToken(){ return localStorage.getItem("gh_token") || ""; }
+function setToken(t){ if(t) localStorage.setItem("gh_token", t); }
+function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+function esc(s){ return (s==null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function render(){
+  const m = MODEL;
+  let beats = m.beats.map((b,i)=>`
+    <div class="beat">
+      <div class="thumb">
+        <img src="${esc(BASE + b.frame)}" alt="reference frame for ${esc(b.time)}" loading="lazy">
+        <div class="tc" contenteditable="true" spellcheck="false" data-bi="${i}" data-bk="time">${esc(b.time)}</div>
+      </div>
+      <div class="body">
+        <div class="line"><span class="k">Voice-over</span><span class="v vo" contenteditable="true" spellcheck="false" data-bi="${i}" data-bk="vo">${esc(b.vo)}</span></div>
+        <div class="line"><span class="k">On-screen</span><span class="v ost" contenteditable="true" spellcheck="false" data-bi="${i}" data-bk="ost">${esc(b.ost)}</span></div>
+        <div class="line"><span class="k">Visual</span><span class="v" contenteditable="true" spellcheck="false" data-bi="${i}" data-bk="visual">${esc(b.visual)}</span></div>
+        <div class="line"><span class="k">Reference</span><span class="v mirror" contenteditable="true" spellcheck="false" data-bi="${i}" data-bk="mirrors">${esc(b.mirrors)}</span></div>
+      </div>
+    </div>`).join("");
+
+  $("#app").innerHTML = `
+    <h1 contenteditable="true" spellcheck="false" data-k="title">${esc(m.title)}</h1>
+    <p class="meta" contenteditable="true" spellcheck="false" data-k="meta">${esc(m.meta)}</p>
+    <h2>Concept</h2>
+    <div class="concept" contenteditable="true" spellcheck="false" data-k="concept">${esc(m.concept)}</div>
+    <h2>Audio / Sound</h2>
+    <div class="concept audiobox" contenteditable="true" spellcheck="false" data-k="audio">${esc(m.audio||"")}</div>
+    <h2>Frame Reference Sheet (inspiration, second by second)</h2>
+    <img class="storyboard" src="${esc(BASE + m.storyboard)}" alt="storyboard of the inspiration video">
+    <p class="sbnote">Every second of the original video. Each beat below pairs its own reference frame with the script so editors can match the new shot to the inspiration.</p>
+    <h2>Shot-By-Shot Script</h2>
+    ${beats}
+    <h2>Production Notes</h2>
+    <div class="notes" contenteditable="true" spellcheck="false" data-k="notes">${esc(m.notes)}</div>
+    <footer>Editable shot-sheet. Edits are saved to the GitHub repo and the live page updates within about a minute. The on-screen creator is a relatable stand-in persona; Demi is the featured product.</footer>`;
+}
+
+// capture edits into MODEL
+document.addEventListener("input", e=>{
+  const t = e.target;
+  if(!t.isContentEditable) return;
+  const txt = t.innerText.replace(/\n+$/,"");
+  if(t.dataset.k){ MODEL[t.dataset.k] = txt; }
+  else if(t.dataset.bi!=null){ MODEL.beats[+t.dataset.bi][t.dataset.bk] = txt; }
+  DIRTY = true; setStatus("Unsaved changes", "edited");
+});
+
+window.addEventListener("beforeunload", e=>{ if(DIRTY){ e.preventDefault(); e.returnValue=""; } });
+
+function ghHeaders(){ const t=getToken(); const h={ "Accept":"application/vnd.github+json" }; if(t) h["Authorization"]="Bearer "+t; return h; }
+
+async function checkToken(token){
+  let r;
+  try { r = await fetch(`https://api.github.com/repos/${REPO}`, {headers:{Accept:"application/vnd.github+json", Authorization:"Bearer "+token}}); }
+  catch(e){ return {ok:false, msg:"Could not reach GitHub: "+e.message}; }
+  if(r.status===401) return {ok:false, msg:"GitHub rejected the token (401 Bad credentials). Re-copy the FULL token with no spaces. Fine-grained tokens start with github_pat_ ."};
+  if(r.status===404) return {ok:false, msg:"The token cannot see this repo (404). When creating it, set Repository access to: Only select repositories, and pick demi-ugc-shotsheet."};
+  if(!r.ok) return {ok:false, msg:"Token check failed (HTTP "+r.status+")."};
+  const j = await r.json().catch(()=>({}));
+  if(!(j.permissions && j.permissions.push)) return {ok:false, msg:"This token can READ but not WRITE. Re-create the fine-grained token with Repository permissions, Contents: Read and write (and this repo selected)."};
+  return {ok:true};
+}
+
+async function getSha(){
+  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}?ref=${BRANCH}&cb=${Date.now()}`, {headers: ghHeaders()});
+  if(!r.ok) throw new Error("Could not read current file (HTTP "+r.status+")");
+  const j = await r.json(); return j.sha;
+}
+
+async function save(){
+  const token = getToken();
+  if(!token){ $("#tokrow").style.display="flex"; $("#tokInput").focus(); setStatus("Paste a token to save", ""); return; }
+  setStatus("Checking token...", "");
+  const chk = await checkToken(token);
+  if(!chk.ok){ setStatus("Save blocked", "err"); alert("Cannot save yet.\n\n"+chk.msg); $("#tokrow").style.display="flex"; return; }
+  try{
+    setStatus("Saving...", "");
+    const sha = await getSha();
+    const body = { message:"Update "+REEL+" shot-sheet via editor", content: b64(JSON.stringify(MODEL, null, 2)), sha, branch: BRANCH };
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, { method:"PUT", headers:{...ghHeaders(), "Content-Type":"application/json"}, body: JSON.stringify(body) });
+    if(!r.ok){ const e=await r.json().catch(()=>({})); throw new Error((e.message||("HTTP "+r.status))); }
+    DIRTY=false; setStatus("Saved. The live page updates within about a minute.", "ok");
+  }catch(err){
+    setStatus("Save failed: "+err.message, "err");
+    alert("Save failed.\n\n"+err.message);
+  }
+}
+
+$("#saveBtn").addEventListener("click", save);
+$("#tokSave").addEventListener("click", ()=>{ const v=$("#tokInput").value.trim(); if(v){ setToken(v); $("#tokInput").value=""; $("#tokrow").style.display="none"; save(); } });
+$("#tokCancel").addEventListener("click", ()=>{ $("#tokrow").style.display="none"; });
+$("#exportBtn").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(MODEL,null,2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="data.json"; a.click();
+});
+
+if(!REEL){
+  $("#app").innerHTML="<p style='color:#b5462f'>No item specified. Open this page from the <a href='index.html'>shot-sheet list</a>.</p>";
+  setStatus("No item","err");
+} else {
+  fetch(FILE+"?cb="+Date.now()).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).then(d=>{ MODEL=d; render(); setStatus(getToken()?"Ready":"Ready (Save will ask for a token once)", ""); })
+    .catch(e=>{ $("#app").innerHTML="<p style='color:#b5462f'>Could not load this item ("+esc(FILE)+"): "+esc(e.message)+"</p>"; setStatus("Load error","err"); });
+}
+</script>
+</body></html>
