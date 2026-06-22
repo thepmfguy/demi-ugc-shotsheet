@@ -1,0 +1,14 @@
+{
+  "status": "draft-pending",
+  "title": "Script pending",
+  "meta": "Vertical video, ~13s. Inspiration: https://www.instagram.com/p/DZU6PjLthwj/. Frames extracted; awaiting the Demi script.",
+  "concept": "Claude will analyze the inspiration video and write the original Demi script here. The frames below are the second-by-second reference.",
+  "audio": "",
+  "storyboard": "frames/storyboard.jpg",
+  "inspiration_url": "https://www.instagram.com/p/DZU6PjLthwj/",
+  "duration_sec": 13,
+  "frame_count": 13,
+  "caption": "",
+  "beats": [],
+  "notes": "Auto-scaffolded by automation/process-reel.js. Run the creative step (automation/CREATIVE-STEP.md) to write the beats, then flip status to draft."
+}
