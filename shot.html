@@ -22,7 +22,10 @@ button.primary:hover{background:#000}
 .tokrow a{color:var(--amber)}
 .wrap{max-width:1000px;margin:0 auto;padding:26px 22px 90px}
 h1[contenteditable]{font-size:26px;margin:0 0 8px;letter-spacing:-.2px;outline:none}
-.meta{color:var(--mut);margin:0 0 18px;outline:none}
+.meta{color:var(--mut);margin:0 0 8px;outline:none}
+.insp{margin:0 0 18px}
+.insp a{color:var(--accent2);text-decoration:none;font-weight:600;font-size:13.5px}
+.insp a:hover{text-decoration:underline}
 .concept{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin:0 0 26px;outline:none}
 .audiobox{border-left-color:var(--accent2)}
 h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--accent2);margin:32px 0 12px;border-bottom:1px solid var(--line);padding-bottom:7px}
@@ -96,6 +99,7 @@ function render(){
   $("#app").innerHTML = `
     <h1 contenteditable="true" spellcheck="false" data-k="title">${esc(m.title)}</h1>
     <p class="meta" contenteditable="true" spellcheck="false" data-k="meta">${esc(m.meta)}</p>
+    ${m.inspiration_url?`<p class="insp"><a href="${esc(m.inspiration_url)}" target="_blank" rel="noopener">View the original submitted video &rarr;</a></p>`:""}
     <h2>Concept</h2>
     <div class="concept" contenteditable="true" spellcheck="false" data-k="concept">${esc(m.concept)}</div>
     <h2>Audio / Sound</h2>
