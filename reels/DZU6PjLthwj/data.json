@@ -1,14 +1,23 @@
 {
-  "status": "draft-pending",
-  "title": "Script pending",
-  "meta": "Vertical video, ~13s. Inspiration: https://www.instagram.com/p/DZU6PjLthwj/. Frames extracted; awaiting the Demi script.",
-  "concept": "Claude will analyze the inspiration video and write the original Demi script here. The frames below are the second-by-second reference.",
-  "audio": "",
+  "title": "Meet Demi: an about-me intro",
+  "meta": "Vertical 9:16 video, ~13s. Persona: Overloaded AE. Inspired by the @virtualnaomi 'about me' couch intro.",
+  "concept": "The inspiration is a trending 'about me' creator intro: a cinematic walk to the couch, then a moody titled card where identity bubbles pop in one by one. The Demi version keeps the exact same template and 13 second arc, but the persona is an account executive who finally logs off on time because Demi already handled her follow ups. The 'about me' card becomes a 'meet Demi' card, and the five identity chips introduce Demi: lives in Slack, drafts your emails, books your meetings, waits for your OK. Same beat order and length, fully original copy.",
+  "audio": "Calm, aesthetic trending audio (soft lo-fi or a mellow pop bed), the kind used for at-home 'about me' intros. A light first-person voice-over carries the lines; if you prefer the text-only version of the trend, mute the voice-over and let the chips plus the audio carry it. Each identity chip pops in on a soft tap SFX synced to the beat. The grade shift at 5s and the return to bright at 11s should each land on a small audio swell.",
   "storyboard": "frames/storyboard.jpg",
-  "inspiration_url": "https://www.instagram.com/p/DZU6PjLthwj/",
-  "duration_sec": 13,
-  "frame_count": 13,
-  "caption": "",
-  "beats": [],
-  "notes": "Auto-scaffolded by automation/process-reel.js. Run the creative step (automation/CREATIVE-STEP.md) to write the beats, then flip status to draft."
+  "beats": [
+    {"time": "0.0 to 1.0s", "frame": "frames/sec-00.jpg", "vo": "It is 5pm and my follow ups are already done.", "ost": "", "visual": "Barefoot AE walks up to a bright, curtained living room couch at the end of the day, relaxed, hands empty. A tablet with Slack open rests on the couch cushion. Warm daylight, calm.", "mirrors": "Inspiration 0s, the creator enters frame and approaches the couch."},
+    {"time": "1.0 to 2.0s", "frame": "frames/sec-01.jpg", "vo": "Not because I stayed late.", "ost": "", "visual": "She turns and begins to lower onto the edge of the couch, unwinding. Same bright grade.", "mirrors": "Inspiration 1s, beginning to sit down."},
+    {"time": "2.0 to 3.0s", "frame": "frames/sec-02.jpg", "vo": "I actually logged off on time.", "ost": "", "visual": "Settling onto the couch, pulling one leg up, getting comfortable.", "mirrors": "Inspiration 2s, sitting down on the couch."},
+    {"time": "3.0 to 4.0s", "frame": "frames/sec-03.jpg", "vo": "Someone covered the busywork for me.", "ost": "", "visual": "Leaning back into the cushions, reaching for the tablet beside her.", "mirrors": "Inspiration 3s, getting comfortable on the couch."},
+    {"time": "4.0 to 5.0s", "frame": "frames/sec-04.jpg", "vo": "Let me introduce her.", "ost": "", "visual": "She picks up the tablet; Slack is open on screen. A soft beat just before the title card.", "mirrors": "Inspiration 4s, picks up the device, the pre-title beat."},
+    {"time": "5.0 to 6.0s", "frame": "frames/sec-05.jpg", "vo": "This is Demi.", "ost": "meet Demi", "visual": "Color grade deepens to a moody tone. A bold yellow 'meet Demi' title with a small Slack laptop glyph pops in top center. An empty rounded chip appears, about to fill.", "mirrors": "Inspiration 5s, the grade shift, the about-me title and the first empty bubble."},
+    {"time": "6.0 to 7.0s", "frame": "frames/sec-06.jpg", "vo": "She lives right inside my Slack.", "ost": "my name is Demi", "visual": "First identity chip snaps in on the right: 'my name is Demi'. She sits cross-legged holding the tablet.", "mirrors": "Inspiration 6s, the first identity bubbles pop in."},
+    {"time": "7.0 to 8.0s", "frame": "frames/sec-07.jpg", "vo": "Drafts every follow up in my voice.", "ost": "lives in Slack", "visual": "Second chip pops in on the left: 'lives in Slack', stacking under the title.", "mirrors": "Inspiration 7s, the second bubble appears."},
+    {"time": "8.0 to 9.0s", "frame": "frames/sec-08.jpg", "vo": "Books the meetings, updates the CRM.", "ost": "drafts your emails", "visual": "Third chip pops in: 'drafts your emails'.", "mirrors": "Inspiration 8s, the third bubble appears."},
+    {"time": "9.0 to 10.0s", "frame": "frames/sec-09.jpg", "vo": "And never sends a thing without my okay.", "ost": "books your meetings", "visual": "Fourth chip pops in on the right: 'books your meetings'.", "mirrors": "Inspiration 9s, the fourth bubble appears."},
+    {"time": "10.0 to 11.0s", "frame": "frames/sec-10.jpg", "vo": "That is the whole grind, handled.", "ost": "waits for your OK", "visual": "Final chip pops in at the bottom: 'waits for your OK'. The full card now shows the title and all five Demi chips.", "mirrors": "Inspiration 10s, the full about-me card with every bubble shown."},
+    {"time": "11.0 to 12.0s", "frame": "frames/sec-11.jpg", "vo": "My proactive coworker.", "ost": "your proactive coworker in Slack", "visual": "Grade returns to bright daylight. The card clears. She settles deeper into the couch, calm and unbothered.", "mirrors": "Inspiration 11s, the grade returns to bright and the creator settles."},
+    {"time": "12.0 to 13.0s", "frame": "frames/sec-12.jpg", "vo": "Comment SLACK and I will introduce you.", "ost": "Demi.ai", "visual": "She is relaxed on the couch, end card. A small 'Demi.ai' wordmark sits in the lower third. The shot loops back to the opening walk in.", "mirrors": "Inspiration 12s, the relaxed settle and loop point."}
+  ],
+  "notes": "Persona (Overloaded AE) is a relatable stand-in for Demi's core user; Demi is the real product. The Slack on the tablet and the 'meet Demi' chips are recreations to be built in edit. Match the inspiration's two grade looks: bright daylight for the couch intro and outro, a moody tone for the about-me card. Keep total runtime near 13s and keep the chip pop timing tight. No media generated yet; generation is gated on separate approval."
 }
